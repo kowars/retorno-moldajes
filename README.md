@@ -58,3 +58,20 @@ Invoke-RestMethod -Uri http://localhost:3000/api/projects -Method Post -ContentT
 - Exportación de reportes a CSV/Excel
 - Importación de catálogo desde Excel
 - Adjuntar fotos/actas a retornos
+
+
+## Despliegue en Firebase
+Esta app está lista para Firebase Hosting + Functions (Firestore).
+
+1) Crea un proyecto en Firebase y anota su Project ID.
+2) En GitHub, configura Secrets del repo:
+   - FIREBASE_PROJECT_ID: tu Project ID
+   - FIREBASE_TOKEN: token de CI de Firebase (irebase login:ci)
+3) Empuja a main o ejecuta el workflow "Deploy Firebase".
+
+Estructura Firebase:
+- Hosting sirve public/
+- Rewrites /api/** -> Function pi (Express)
+- Datos en Firestore (colecciones: formwork, projects, dispatches(+items), returns(+items))
+
+> Nota: La versión para Firebase usa Firestore en unctions/index.js. La versión local usa SQLite.
