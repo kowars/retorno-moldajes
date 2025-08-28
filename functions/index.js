@@ -13,28 +13,23 @@ app.use(cors({ origin: true }));
 // Log simple para depurar rutas
 app.use((req, _res, next) => { console.log(`[api] ${req.method} ${req.path}`); next(); });
 
-const api = express.Router();
-
-// Helpers
-const toId = (refOrId) => typeof refOrId === 'string' ? refOrId : refOrId.id;
-
 // Health
-api.get('/healthz', (_req, res) => res.json({ ok: true }));
+app.get('/healthz', (_req, res) => res.json({ ok: true }));
 
 // FORMWORK
-api.get('/formwork', async (_req, res) => {
+app.get('/formwork', async (_req, res) => {
   const snap = await fsdb.collection('formwork').orderBy('name').get();
   res.json(snap.docs.map(d => ({ id: d.id, ...d.data() })));
 });
 
-api.post('/formwork', async (req, res) => {
+app.post('/formwork', async (req, res) => {
   const { name, sku = null, unit = 'unidad' } = req.body || {};
   if (!name) return res.status(400).json({ error: 'name requerido' });
   const ref = await fsdb.collection('formwork').add({ name, sku, unit });
   res.status(201).json({ id: ref.id, name, sku, unit });
 });
 
-api.put('/formwork/:id', async (req, res) => {
+app.put('/formwork/:id', async (req, res) => {
   const { id } = req.params;
   const { name = null, sku = null, unit = null } = req.body || {};
   const ref = fsdb.collection('formwork').doc(id);
@@ -45,7 +40,7 @@ api.put('/formwork/:id', async (req, res) => {
   res.json({ id, ...updated.data() });
 });
 
-api.delete('/formwork/:id', async (req, res) => {
+app.delete('/formwork/:id', async (req, res) => {
   const ref = fsdb.collection('formwork').doc(req.params.id);
   const snap = await ref.get();
   if (!snap.exists) return res.status(404).json({ error: 'no encontrado' });
@@ -54,19 +49,19 @@ api.delete('/formwork/:id', async (req, res) => {
 });
 
 // PROJECTS
-api.get('/projects', async (_req, res) => {
+app.get('/projects', async (_req, res) => {
   const snap = await fsdb.collection('projects').orderBy('name').get();
   res.json(snap.docs.map(d => ({ id: d.id, ...d.data() })));
 });
 
-api.post('/projects', async (req, res) => {
+app.post('/projects', async (req, res) => {
   const { name, code = null, client = null } = req.body || {};
   if (!name) return res.status(400).json({ error: 'name requerido' });
   const ref = await fsdb.collection('projects').add({ name, code, client });
   res.status(201).json({ id: ref.id, name, code, client });
 });
 
-api.put('/projects/:id', async (req, res) => {
+app.put('/projects/:id', async (req, res) => {
   const { id } = req.params;
   const { name = null, code = null, client = null } = req.body || {};
   const ref = fsdb.collection('projects').doc(id);
@@ -77,7 +72,7 @@ api.put('/projects/:id', async (req, res) => {
   res.json({ id, ...updated.data() });
 });
 
-api.delete('/projects/:id', async (req, res) => {
+app.delete('/projects/:id', async (req, res) => {
   const ref = fsdb.collection('projects').doc(req.params.id);
   const snap = await ref.get();
   if (!snap.exists) return res.status(404).json({ error: 'no encontrado' });
@@ -86,7 +81,7 @@ api.delete('/projects/:id', async (req, res) => {
 });
 
 // DISPATCHES
-api.get('/dispatches', async (_req, res) => {
+app.get('/dispatches', async (_req, res) => {
   const snap = await fsdb.collection('dispatches').orderBy('date', 'desc').get();
   const result = [];
   for (const d of snap.docs) {
@@ -101,7 +96,7 @@ api.get('/dispatches', async (_req, res) => {
   res.json(result);
 });
 
-api.get('/dispatches/:id', async (req, res) => {
+app.get('/dispatches/:id', async (req, res) => {
   const dref = fsdb.collection('dispatches').doc(req.params.id);
   const ds = await dref.get();
   if (!ds.exists) return res.status(404).json({ error: 'no encontrado' });
@@ -135,7 +130,7 @@ api.get('/dispatches/:id', async (req, res) => {
   res.json({ ...d, items: resultItems });
 });
 
-api.post('/dispatches', async (req, res) => {
+app.post('/dispatches', async (req, res) => {
   const { project_id, date, notes = null, items } = req.body || {};
   if (!project_id || !date || !Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ error: 'project_id, date, items requeridos' });
@@ -152,7 +147,7 @@ api.post('/dispatches', async (req, res) => {
 });
 
 // RETURNS
-api.get('/returns', async (_req, res) => {
+app.get('/returns', async (_req, res) => {
   const snap = await fsdb.collection('returns').orderBy('date', 'desc').get();
   const result = [];
   for (const r of snap.docs) {
@@ -168,7 +163,7 @@ api.get('/returns', async (_req, res) => {
   res.json(result);
 });
 
-api.get('/returns/:id', async (req, res) => {
+app.get('/returns/:id', async (req, res) => {
   const rref = fsdb.collection('returns').doc(req.params.id);
   const rs = await rref.get();
   if (!rs.exists) return res.status(404).json({ error: 'no encontrado' });
@@ -184,7 +179,7 @@ api.get('/returns/:id', async (req, res) => {
   res.json({ ...r, project_name, project_code, items });
 });
 
-api.post('/returns', async (req, res) => {
+app.post('/returns', async (req, res) => {
   const { dispatch_id, date, notes = null, items } = req.body || {};
   if (!dispatch_id || !date || !Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ error: 'dispatch_id, date, items requeridos' });
@@ -231,7 +226,7 @@ api.post('/returns', async (req, res) => {
 });
 
 // REPORTS
-api.get('/reports/pending-returns', async (_req, res) => {
+app.get('/reports/pending-returns', async (_req, res) => {
   const result = [];
   const dsnap = await fsdb.collection('dispatches').get();
   for (const d of dsnap.docs) {
@@ -276,8 +271,5 @@ api.get('/reports/pending-returns', async (_req, res) => {
   }
   res.json(result.sort((a,b) => (a.date < b.date ? 1 : -1)));
 });
-
-// Montar router en /api
-app.use('/api', api);
 
 export const api = functions.https.onRequest(app);
