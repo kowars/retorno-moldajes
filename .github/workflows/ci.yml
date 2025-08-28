@@ -1,0 +1,35 @@
+﻿name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start server
+        run: |
+          nohup node src/server.js >/dev/null 2>&1 & echo $! > server.pid
+          sleep 3
+
+      - name: Health check
+        run: |
+          curl -sSf http://localhost:3000 | head -c 200
+
+      - name: Stop server
+        if: always()
+        run: |
+          kill $(cat server.pid) || true
