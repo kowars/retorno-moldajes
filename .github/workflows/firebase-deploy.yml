@@ -28,17 +28,18 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
           firebase --version
-          firebase projects:list --project moldajes-retorno || true
+          firebase projects:list --project moldajes-retornos || true
 
       - name: Deploy Functions (debug)
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
-          firebase deploy --non-interactive --only functions --project moldajes-retorno --debug
+          firebase deploy --non-interactive --only functions --project moldajes-retornos --debug
 
       - name: Deploy Hosting (debug)
         if: always()
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
-          firebase deploy --non-interactive --only hosting --project moldajes-retorno --debug
+          firebase deploy --non-interactive --only hosting --project moldajes-retornos --debug
+
