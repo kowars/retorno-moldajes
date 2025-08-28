@@ -1,0 +1,75 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Retornos de Moldajes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <h1>Administración de Retornos de Moldajes</h1>
+  <nav>
+    <button data-tab="formwork">Catálogo Moldajes</button>
+    <button data-tab="projects">Proyectos</button>
+    <button data-tab="dispatches">Despachos</button>
+    <button data-tab="returns">Retornos</button>
+    <button data-tab="reports">Reportes</button>
+  </nav>
+
+  <section id="formwork" class="tab">
+    <h2>Catálogo</h2>
+    <form id="form-add-formwork">
+      <input name="name" placeholder="Nombre" required />
+      <input name="sku" placeholder="SKU (opcional)" />
+      <input name="unit" placeholder="Unidad (ej: unidad, m2)" />
+      <button>Agregar</button>
+    </form>
+    <table id="tbl-formwork"></table>
+  </section>
+
+  <section id="projects" class="tab hidden">
+    <h2>Proyectos</h2>
+    <form id="form-add-project">
+      <input name="name" placeholder="Nombre" required />
+      <input name="code" placeholder="Código" />
+      <input name="client" placeholder="Cliente" />
+      <button>Agregar</button>
+    </form>
+    <table id="tbl-projects"></table>
+  </section>
+
+  <section id="dispatches" class="tab hidden">
+    <h2>Despachos</h2>
+    <form id="form-add-dispatch">
+      <input name="project_id" placeholder="ID Proyecto" required />
+      <input name="date" type="date" required />
+      <input name="notes" placeholder="Notas" />
+      <label>Items (una línea por ítem: formwork_id,cantidad)</label>
+      <textarea name="items" rows="4" placeholder="1,100&#10;2,50"></textarea>
+      <button>Crear Despacho</button>
+    </form>
+    <table id="tbl-dispatches"></table>
+  </section>
+
+  <section id="returns" class="tab hidden">
+    <h2>Retornos</h2>
+    <form id="form-add-return">
+      <input name="dispatch_id" placeholder="ID Despacho" required />
+      <input name="date" type="date" required />
+      <input name="notes" placeholder="Notas" />
+      <label>Items (formato: formwork_id,cantidad,condición,observaciones)</label>
+      <textarea name="items" rows="4" placeholder="1,30,bueno,ok&#10;2,5,dañado,abollado"></textarea>
+      <button>Registrar Retorno</button>
+    </form>
+    <table id="tbl-returns"></table>
+  </section>
+
+  <section id="reports" class="tab hidden">
+    <h2>Pendientes de Retorno</h2>
+    <button id="btn-refresh-report">Actualizar</button>
+    <table id="tbl-report"></table>
+  </section>
+
+  <script src="/app.js"></script>
+</body>
+</html>

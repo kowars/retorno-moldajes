@@ -1,0 +1,11 @@
+﻿body { font-family: system-ui, sans-serif; margin: 16px; }
+h1 { margin-bottom: 8px; }
+nav { display: flex; gap: 8px; margin-bottom: 16px; }
+.hidden { display: none; }
+form { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 8px; margin-bottom: 12px; }
+form textarea { grid-column: 1 / -1; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ddd; padding: 6px 8px; }
+th { background: #f3f3f3; text-align: left; }
+button { padding: 6px 10px; }
+input, textarea { padding: 6px 8px; }
